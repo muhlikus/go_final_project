@@ -1,13 +1,15 @@
 package tests
 
 import (
+	"database/sql"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
+	//_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
+	"modernc.org/sqlite"
 )
 
 type Task struct {
@@ -16,6 +18,10 @@ type Task struct {
 	Title   string `db:"title"`
 	Comment string `db:"comment"`
 	Repeat  string `db:"repeat"`
+}
+
+func init() {
+	sql.Register("sqlite3", &sqlite.Driver{})
 }
 
 func count(db *sqlx.DB) (int, error) {
