@@ -16,7 +16,7 @@ type respTasks struct {
 }
 
 type respOkErr struct {
-	Id    string `json:"id"`
+	Id    string `json:"id,omitempty"`
 	Error string `json:"error,omitempty"`
 }
 
@@ -88,7 +88,7 @@ func handleTaskGET(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		respBody, err = json.Marshal(respOkErr{Error: err.Error()})
 	} else {
-		task, err = scheduler.getTask(id)
+		task, err = schedulerService.getTask(id)
 		if err != nil {
 			respBody, err = json.Marshal(respOkErr{Error: err.Error()})
 		} else {
@@ -136,7 +136,7 @@ func handleTaskDone(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		resp.Error = err.Error()
 	} else {
-		err = scheduler.doneTask(id)
+		err = schedulerService.doneTask(id)
 		if err != nil {
 			resp.Error = err.Error()
 		}
@@ -162,7 +162,7 @@ func handleTaskDELETE(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		resp.Error = err.Error()
 	} else {
-		err = scheduler.deleteTask(id)
+		err = schedulerService.deleteTask(id)
 		if err != nil {
 			resp.Error = err.Error()
 		}
@@ -183,7 +183,7 @@ func handleTasks(w http.ResponseWriter, r *http.Request) {
 	var respBody []byte
 	var err error
 
-	tasks, err := scheduler.getTasks()
+	tasks, err := schedulerService.getTasks()
 	if err != nil {
 		respBody, err = json.Marshal(respOkErr{Error: err.Error()})
 	} else {
@@ -245,7 +245,7 @@ func addTask(body io.ReadCloser) (int, error) {
 		}
 	}
 
-	id, err := scheduler.addTask(task)
+	id, err := schedulerService.addTask(task)
 	if err != nil {
 		return 0, err
 	}
@@ -306,6 +306,6 @@ func updateTask(body io.ReadCloser) error {
 		}
 	}
 
-	err = scheduler.updateTask(task)
+	err = schedulerService.updateTask(task)
 	return err
 }

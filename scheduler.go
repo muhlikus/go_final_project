@@ -12,7 +12,7 @@ type repeatSettings struct {
 	interval int
 }
 
-type Scheduler struct {
+type scheduler struct {
 	db *sql.DB
 }
 
@@ -24,7 +24,11 @@ type Task struct {
 	Repeat  string `json:"repeat"`  // "d 5"
 }
 
-func (s Scheduler) addTask(t Task) (int64, error) {
+func NewScheduler(db *sql.DB) scheduler {
+	return scheduler{db}
+}
+
+func (s scheduler) addTask(t Task) (int64, error) {
 	res, err := s.db.Exec("INSERT INTO scheduler (date, title, comment, repeat) VALUES (:date, :title, :comment, :repeat)",
 		sql.Named("date", t.Date),
 		sql.Named("title", t.Title),
@@ -38,7 +42,7 @@ func (s Scheduler) addTask(t Task) (int64, error) {
 	return res.LastInsertId()
 }
 
-func (s Scheduler) updateTask(t Task) error {
+func (s scheduler) updateTask(t Task) error {
 	id, err := strconv.Atoi(t.Id)
 	if err != nil {
 		return err
@@ -67,7 +71,7 @@ func (s Scheduler) updateTask(t Task) error {
 	return nil
 }
 
-func (s Scheduler) getTasks() ([]Task, error) {
+func (s scheduler) getTasks() ([]Task, error) {
 
 	var tasks []Task = make([]Task, 0, getTasksLimit)
 
@@ -95,7 +99,7 @@ func (s Scheduler) getTasks() ([]Task, error) {
 	return tasks, nil
 }
 
-func (s Scheduler) getTask(id int) (Task, error) {
+func (s scheduler) getTask(id int) (Task, error) {
 
 	var task Task
 
@@ -108,7 +112,7 @@ func (s Scheduler) getTask(id int) (Task, error) {
 	return task, nil
 }
 
-func (s Scheduler) doneTask(id int) error {
+func (s scheduler) doneTask(id int) error {
 
 	var err error
 
@@ -139,7 +143,7 @@ func (s Scheduler) doneTask(id int) error {
 	return nil
 }
 
-func (s Scheduler) deleteTask(id int) error {
+func (s scheduler) deleteTask(id int) error {
 
 	res, err := s.db.Exec("DELETE FROM scheduler WHERE id = :id", sql.Named("id", id))
 	if err != nil {

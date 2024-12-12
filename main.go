@@ -19,7 +19,7 @@ var (
 	dbFileName string = "scheduler.db"
 )
 
-var scheduler Scheduler
+var schedulerService scheduler
 
 func main() {
 
@@ -34,12 +34,14 @@ func main() {
 		dbFileName = envDbFile
 	}
 
-	// создаем экземпляр Планировщика
-	scheduler.db, err = dbConnect(dbFileName)
+	db, err := dbConnect(dbFileName)
 	if err != nil {
 		log.Fatal("unable to connect database: ", err)
 	}
-	defer scheduler.db.Close()
+	defer db.Close()
+
+	// создаем экземпляр Планировщика
+	schedulerService = NewScheduler(db)
 
 	// устанавливаем обработчики и запускаем сервер
 	mux := http.NewServeMux()
