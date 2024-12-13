@@ -14,8 +14,8 @@ FROM scratch
 
 WORKDIR /app
 
-COPY --from=builder /builder/scheduler .
-COPY --from=builder /builder/web ./web
+COPY --from=builder /build/scheduler .
+COPY --from=builder /build/web ./web
 
 ENV TODO_PORT=7540
 ENV TODO_DBFILE=scheduler.db
