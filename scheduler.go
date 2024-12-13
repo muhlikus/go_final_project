@@ -128,16 +128,17 @@ func (s scheduler) doneTask(id int) error {
 		if err != nil {
 			return err
 		}
-	} else {
-		task.Date, err = NextDate(time.Now(), task.Date, task.Repeat)
-		if err != nil {
-			return err
-		}
+		return nil
+	}
 
-		err = s.updateTask(task)
-		if err != nil {
-			return err
-		}
+	task.Date, err = NextDate(time.Now(), task.Date, task.Repeat)
+	if err != nil {
+		return err
+	}
+
+	err = s.updateTask(task)
+	if err != nil {
+		return err
 	}
 
 	return nil

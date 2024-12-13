@@ -51,7 +51,7 @@ func main() {
 	mux.HandleFunc("/api/tasks", handleTasks)
 	mux.HandleFunc("/api/task/done", handleTaskDone)
 
-	log.Println("Starting HTTP Server...")
+	log.Printf("Starting HTTP Server on port [:%s]...", serverPort)
 	err = http.ListenAndServe(fmt.Sprintf(":%s", serverPort), mux)
 	if err != nil {
 		panic(err)
